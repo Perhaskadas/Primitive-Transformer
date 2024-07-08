@@ -1,7 +1,7 @@
 import torch
-from single_encoder_layer import SingleEncoderLayer
+from Model.Layers.single_encoder_layer import SingleEncoderLayer
 import torch.nn as nn
-from input_embedding import InputEmbedding
+from Model.Layers.input_embedding import InputEmbedding
 
 class EncoderBlock(nn.Module):
     def __init__(self, num_heads: int, n_hidden: int, num_layers: int, vocab_size: int, d_model: int, dropout: float = 0.1):

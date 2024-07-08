@@ -1,7 +1,6 @@
 from rotary_embedding_torch import RotaryEmbedding
 import torch
 import torch.nn as nn
-import math
 from scaled_dp_attention import ScaledDotProductAttention
 
 class MultiHeadAttention(nn.Module):

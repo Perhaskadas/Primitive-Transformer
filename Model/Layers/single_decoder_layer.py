@@ -1,6 +1,6 @@
 import torch
 from torch import nn 
-from multihead_attention import MultiHeadAttention
+from Model.Attention.multihead_attention import MultiHeadAttention
 from feed_forward import FeedForward
 
 class SingleDecoderLayer(nn.Module):
