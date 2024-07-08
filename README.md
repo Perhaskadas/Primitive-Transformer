@@ -1,1 +1,1 @@
-My implementation of the simple transformer from the paper "Attention is All You Need". I have switched out the default positional embedding with rotary embedding from https://github.com/lucidrains/rotary-embedding-torch. Currently untested.
+My implementation of the simple transformer from the paper "Attention is All You Need". I have switched out the default positional embedding with rotary embedding from https://github.com/lucidrains/rotary-embedding-torch. Currently untested, and without the code to train and run has not yet been written..
