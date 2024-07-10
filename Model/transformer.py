@@ -6,7 +6,7 @@ from encoder_block import EncoderBlock
 class Transformer(nn.Module):
     # Note I recently just learned that super().__init__() and super(classname, self).__init__() are the same
     # But one is for super().__init__() is from python 3
-    def __init__(self, heads: int, ffn_hidden: int, layers: int, enc_vocab: int, dec_vocab: int, 
+    def __init__(self, heads: int, ffn_hidden: int, layers: int, vocab_size: int, 
                  model: int, enc_padding_tokID: torch.Tensor, dec_padding_tokID: torch.Tensor, dropout: float = 0.1):
         super(Transformer, self).__init__()
         self.enc_padding_tokID = enc_padding_tokID
@@ -16,7 +16,7 @@ class Transformer(nn.Module):
             num_heads = heads, 
             n_hidden = ffn_hidden, 
             num_layers = layers, 
-            vocab_size = enc_vocab, 
+            vocab_size = vocab_size, 
             d_model = model,
             dropout = dropout
             )
@@ -25,10 +25,10 @@ class Transformer(nn.Module):
             d_model = model,
             num_heads = heads,
             n_hidden = ffn_hidden,
-            vocab_size = dec_vocab,
+            vocab_size = vocab_size,
             dropout = dropout
         )
-        self.linear = nn.Linear(model, dec_vocab) # Final Linear Layer
+        self.linear = nn.Linear(model, vocab_size) # Final Linear Layer
     
     def forward(self, enc_input: torch.Tensor, dec_input: torch.Tensor):
         encoder_mask = self.encoder_padding_mask(enc_input)

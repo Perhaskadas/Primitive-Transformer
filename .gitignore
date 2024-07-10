@@ -1,0 +1,30 @@
+# Ignore compiled Python files
+*.pyc
+
+# Ignore virtual environment
+venv/
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore logs
+*.log
+
+# Ignore cache files
+__pycache__/
+
+# Ignore environment-specific files
+.env
+
+# Ignore sensitive or private information
+config.ini
+secrets.txt
+
+# Ignore build artifacts
+build/
+dist/
+
+# Ignore data folder
+data/
+
