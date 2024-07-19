@@ -1,0 +1,12 @@
+num_heads = 1 # Number of attention heads in encoder/decoder
+model = 32 # Dimension of the model
+n_hidden = 32 # Number of hidden units in the feed forward network
+layers = 1 # Number of encoder/decoder layers
+vocab_size = 35000 # Number of words in the english-german vocabulary
+dropout = 0.1 # Dropout rate
+max_tokens = 350 # max number of tokens in a batch
+batch_size = 1 # Batch size
+label_smoothing = 0.1
+num_epochs = 1 # Number of epochs
+validation_split_ratio = 0.9
+learning_rate = 10**-4 # Learning rate
