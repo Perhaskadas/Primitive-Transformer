@@ -3,5 +3,5 @@ n_hidden = 512 # Number of hidden units in the feed forward network
 layers = 6 # Number of encoder/decoder layers
 vocab_size = 35000 # Number of words in the english-german vocabulary
 dropout = 0.1 # Dropout rate
-batch_size = 25000 # max number of tokens in a batch
-
+max_tokens = 25000 # max number of tokens in a batch
+batch_size = 32 # Batch size
