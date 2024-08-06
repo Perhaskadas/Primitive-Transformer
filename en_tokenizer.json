@@ -14,7 +14,7 @@
     },
     {
       "id": 1,
-      "content": "[SOS]",
+      "content": "[EOS]",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
@@ -23,7 +23,7 @@
     },
     {
       "id": 2,
-      "content": "[EOS]",
+      "content": "[SOS]",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
@@ -60,8 +60,8 @@
     "ignore_merges": false,
     "vocab": {
       "[UNK]": 0,
-      "[SOS]": 1,
-      "[EOS]": 2,
+      "[EOS]": 1,
+      "[SOS]": 2,
       "[PAD]": 3,
       "!": 4,
       "\"": 5,

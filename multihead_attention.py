@@ -4,7 +4,7 @@ import torch.nn as nn
 from scaled_dp_attention import ScaledDotProductAttention
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model: int, num_heads: int):
+    def __init__(self, d_model: int, num_heads: int, use_rotary_emb: bool = False) -> None:
         super(MultiHeadAttention, self).__init__()
         self.num_heads = num_heads
         self.weight_q = nn.Linear(d_model, d_model, bias=False) # (d_model, d_model)
@@ -12,8 +12,10 @@ class MultiHeadAttention(nn.Module):
         self.weight_v = nn.Linear(d_model, d_model, bias=False) # (d_model, d_model)
         self.weight_concat = nn.Linear(d_model, d_model, bias=False) # (d_model, d_model)
         self.SDPAttention = ScaledDotProductAttention()
+        self.use_rotary_emb = use_rotary_emb
     
     def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # MM qkv with their weight matrices
         q = self.weight_q(q)
         k = self.weight_k(k)
@@ -23,11 +25,13 @@ class MultiHeadAttention(nn.Module):
         k = self.split(k)
         v = self.split(v)
 
-
+        q = q.cpu()
+        k = k.cpu()
         # Apply rotation to q and k
-        rotary_emb = RotaryEmbedding(dim = 32)
-        q = rotary_emb.rotate_queries_or_keys(q)
-        k = rotary_emb.rotate_queries_or_keys(k)
+        if self.use_rotary_emb:
+            rotary_emb = RotaryEmbedding(dim = 32)
+            q = rotary_emb.rotate_queries_or_keys(q).to(device)
+            k = rotary_emb.rotate_queries_or_keys(k).to(device)
         
         # Compute the scaled dot-product attention
         output, scores = self.SDPAttention(q, k, v, mask)

@@ -4,9 +4,9 @@ from multihead_attention import MultiHeadAttention
 from feed_forward import FeedForward
 
 class SingleEncoderLayer(nn.Module):
-    def __init__(self, d_model: int, num_heads: int, n_hidden: int, dropout: float = 0.1):
+    def __init__(self, d_model: int, num_heads: int, n_hidden: int, use_rotary_embed: bool = False, dropout: float = 0.1):
         super(SingleEncoderLayer, self).__init__()
-        self.multihead = MultiHeadAttention(d_model, num_heads)
+        self.multihead = MultiHeadAttention(d_model, num_heads, use_rotary_emb=use_rotary_embed)
         self.layernorm1 = nn.LayerNorm(d_model)
         self.dropout = nn.Dropout(dropout)
         self.feedforward = FeedForward(d_model, n_hidden)
