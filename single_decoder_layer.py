@@ -26,7 +26,7 @@ class SingleDecoderLayer(nn.Module):
         output = self.dropout(output)
 
         residual_connect = output
-        output = self.crossAttention(encoder, encoder, decoder, padding_mask)
+        output = self.crossAttention(decoder, encoder, encoder, padding_mask)
         output = self.layernorm2(output + residual_connect)
         output = self.dropout(output)
 

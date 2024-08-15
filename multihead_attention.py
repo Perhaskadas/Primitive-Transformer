@@ -25,8 +25,9 @@ class MultiHeadAttention(nn.Module):
         k = self.split(k)
         v = self.split(v)
 
-        q = q.cpu()
-        k = k.cpu()
+        q = q.to(device)
+        k = k.to(device)
+        v = v.to(device)
         # Apply rotation to q and k
         if self.use_rotary_emb:
             rotary_emb = RotaryEmbedding(dim = 32)

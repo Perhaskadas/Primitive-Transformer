@@ -120,7 +120,7 @@ def validation(model: Transformer, validation_ds, tokenizer1, tokenizer2, max_le
             count += 1
             encoder_input = batch["encoder_input"].to(device)
             encoder_input_single = encoder_input[0].unsqueeze(0)
-            print_msg("Encoder input single pre decode: ", encoder_input_single)
+            print_msg(f"Encoder input single pre decode: {encoder_input_single}")
             output = greedy_decode(model, encoder_input_single, tokenizer1, tokenizer2, max_len, device, print_msg)
 
             source_text = batch['lang1'][0]
