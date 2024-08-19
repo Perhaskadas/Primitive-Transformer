@@ -88,6 +88,6 @@ def download_data_config_tokenizers(language1: str, language2: str):
     print(f"Max length for {language2}: {lang2_max}")
 
     lang1_dataloader = DataLoader(training_data_processed, batch_size=hp.batch_size, shuffle=True)
-    lang2_dataloader = DataLoader(validation_data_processed, batch_size=hp.batch_size, shuffle=True)
+    lang2_dataloader = DataLoader(validation_data_processed, batch_size=1, shuffle=True)
 
     return lang1_dataloader, lang2_dataloader, tokenizer1, tokenizer2

@@ -11,6 +11,7 @@ num_epochs = 60 # Number of epochs
 validation_split_ratio = 0.9
 max_grad_norm = 1 # Gradient clipping
 learning_rate = 0.001 # Learning rate
+adam_eps = 1e-9 # Epsilon for Adam optimizer
 
 source_language = "de" # Source Language from Opus Books MUST BE STRING
 target_language = "en" # Target Language from Opus Books MUST BE STRING

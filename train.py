@@ -38,7 +38,7 @@ def train():
     save_path.mkdir(parents=True, exist_ok=True)
 
     # Creating the Optimizer and Loss
-    optimizer = torch.optim.Adam(model.parameters(), lr=hp.learning_rate, eps=1e-9)
+    optimizer = torch.optim.Adam(model.parameters(), lr=hp.learning_rate, eps=hp.adam_eps)
     loss_fn = nn.CrossEntropyLoss(ignore_index=tokenizer1.token_to_id("[PAD]"), label_smoothing=hp.label_smoothing).to(device)
 
     saved_models=list(save_path.glob("*epoch_*.pth"))
@@ -69,9 +69,9 @@ def train():
             decoder_mask = batch["decoder_mask"].to(device) # (batch_size, 1, seq_len, seq_len)
             label = batch["label"].to(device) # (batch_size, seq_len)
 
-            encoder_output = model.encoder(encoder_input, encoder_mask) # Run it through the encoder
-            decoder_output = model.decoder(decoder_input, encoder_output, encoder_mask, decoder_mask) # Run it through the decoder
-            output_logits = model.project(decoder_output) # Project it to the vocab size
+            encoder_output = model.module.encoder(encoder_input, encoder_mask) # Run it through the encoder
+            decoder_output = model.module.decoder(decoder_input, encoder_output, encoder_mask, decoder_mask) # Run it through the decoder
+            output_logits = model.module.project(decoder_output) # Project it to the vocab size
 
             # Calculate Loss
             loss = loss_fn(output_logits.view(-1, tokenizer2.get_vocab_size()), label.view(-1))
@@ -90,7 +90,7 @@ def train():
 
             # TODO: Validate to see how we are doing
             if count % hp.validation_cycle == 0:
-                validation(model, lang2_dataloader, tokenizer1, tokenizer2, hp.max_tokens, device, lambda msg: batch_iterator.write(msg), num_examples=1)
+                validation(model, lang2_dataloader, tokenizer1, tokenizer2, hp.seq_len, device, lambda msg: batch_iterator.write(msg), num_examples=1)
 
         # Save the checkpoints
         if epoch % hp.save_cycle == 0:
@@ -134,7 +134,7 @@ def validation(model: Transformer, validation_ds, tokenizer1, tokenizer2, max_le
 
             source_text = batch["lang1"][0]
             target_text = batch["lang2"][0]
-            predicted_text = tokenizer2.decode(output_logits.cpu().numpy())
+            predicted_text = tokenizer2.decode(output_logits.detach().cpu().numpy())
 
             # Print it to console
             print_msg('-'*console_width)
@@ -142,13 +142,13 @@ def validation(model: Transformer, validation_ds, tokenizer1, tokenizer2, max_le
             print_msg(f"{f'TARGET: ':>12}{target_text}")
             print_msg(f"{f'PREDICTED: ':>12}{predicted_text}")
 
-def greedy_decode(model, encoder_input, encoder_mask, tokenizer_src, tokenizer_tgt, max_len, device):
+def greedy_decode(model: Transformer, encoder_input, encoder_mask, tokenizer_src, tokenizer_tgt, max_len, device):
     SOS_ID = tokenizer_tgt.token_to_id("[SOS]")
     EOS_ID = tokenizer_tgt.token_to_id("[EOS]")
     model.eval()
     
     # Precompute the encoder output and reuse it for every step
-    encoder_output = model.encoder(encoder_input, encoder_mask)
+    encoder_output = model.module.encoder(encoder_input, encoder_mask)
 
     # Initialize the decoder input with the sos token
     decoder_input = torch.empty(1, 1).fill_(SOS_ID).type_as(encoder_input).to(device)
@@ -161,8 +161,8 @@ def greedy_decode(model, encoder_input, encoder_mask, tokenizer_src, tokenizer_t
         decoder_mask = causal_mask(decoder_input.size(1)).type_as(encoder_mask).to(device)
 
         # calculate output
-        decoder_output = model.decoder(decoder_input, encoder_output, encoder_mask, decoder_mask)
-        decoder_output_probs = model.project(decoder_output[:, -1])
+        decoder_output = model.module.decoder(decoder_input, encoder_output, encoder_mask, decoder_mask)
+        decoder_output_probs = model.module.project(decoder_output[:, -1])
 
         # get next token
         _, next_word = torch.max(decoder_output_probs, dim=1)
@@ -172,6 +172,7 @@ def greedy_decode(model, encoder_input, encoder_mask, tokenizer_src, tokenizer_t
 
         if next_word == EOS_ID:
             break
+    return decoder_input.squeeze(0)
 
 if __name__ == "__main__":
     train()
